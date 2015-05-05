@@ -23,7 +23,7 @@ network_mode = True
 #                           Incremental Clustering
 #
 num_nodes_per_layer = [[8, 8], [4, 4], [2, 2], [1, 1]]
-num_cents_per_layer = [128, 38, 28, 8]
+num_cents_per_layer = [25, 25, 25, 25]
 print "num_cents_per_layer", num_cents_per_layer
 print "Uniform DeSTIN with Clustering"
 algorithm_choice = 'Clustering'
@@ -107,7 +107,8 @@ for I in range(data.shape[0]):  # For Every image in the data set
             DESTIN.layers[0][L].load_input(
                 DESTIN.layers[0][L - 1].nodes, [2, 2])
             DESTIN.layers[0][L].do_layer_learning()
-    DESTIN.update_belief_exporter()
+    DESTIN.update_pool_belief_exporter()
+    #DESTIN.update_belief_exporter()
     if I in range(199, 50999, 200):
         Name = 'train/' + str(I + 1) + '.txt'
         #file_id = open(Name, 'w')
@@ -133,7 +134,9 @@ for I in range(data.shape[0]):  # For Every image in the data set
             DESTIN.layers[0][L].load_input(
                 DESTIN.layers[0][L - 1].nodes, [2, 2])
             DESTIN.layers[0][L].do_layer_learning()
-    DESTIN.update_belief_exporter()
+    DESTIN.update_pool_belief_exporter()
+    #DESTIN.update_belief_exporter()
+
     if I in range(199, 10199, 200):
         Name = 'test/' + str(I + 1) + '.txt'
         np.savetxt(Name, np.array(DESTIN.network_belief['belief']))
