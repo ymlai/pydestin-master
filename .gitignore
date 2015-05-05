@@ -1,9 +1,0 @@
-*.pyc
-octave-core
-*~
-./idea
-*.mat
-testFiles/
-test/
-train/
-docs/
