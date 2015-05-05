@@ -52,10 +52,32 @@ class Layer:
             for J in range(len(self.nodes[0])):
                 self.nodes[I][J].init_node_learning_params(algorithm_choice, alg_params)
 
+    def shared_learning(self):
+        #print len(self.nodes)
+        for I in range(len(self.nodes)):
+            for J in range(len(self.nodes[0])):
+                #print "=========================shared==================================="
+                #print "self.node",I," ",J,self.nodes[I][J].learning_algorithm.mean
+                #print "-------------------------------------------------------------------"
+                self.nodes[I][J].do_node_learning(self.mode)
+                for M in range(len(self.nodes)):
+                    for L in range(len(self.nodes)):
+                           self.nodes[M][L].learning_algorithm.mean = self.nodes[I][J].learning_algorithm.mean
+                           #print "M",M ,"L",L,"I",I,"J",J
+                           self.nodes[M][L].learning_algorithm.var = self.nodes[I][J].learning_algorithm.var
+                           self.nodes[M][L].learning_algorithm.starv = self.nodes[I][J].learning_algorithm.starv
+                #print "=========================initial===================================="
+                #print "self.node",I," ",J,self.nodes[I][J].learning_algorithm.mean
+                #print "********************************************************************"
+
     def do_layer_learning(self):
+        #print "len(self.nodes)",len(self.nodes)
         for I in range(len(self.nodes)):
             for J in range(len(self.nodes[0])):
                 self.nodes[I][J].do_node_learning(self.mode)
+
+
+
 
     def train_typical_node(self, input_, windowSize, algorithm_choice):
         TN = self.nodes[0][0]
@@ -83,10 +105,19 @@ class Layer:
                     TN.do_node_learning(self.mode)
         self.nodes[0][0] = TN
 
+
     def share_learned_parameters(self):
         for I in range(len(self.nodes)):
             for J in range(len(self.nodes[0])):
-                self.nodes[I][J] = self.nodes[0][0]
+                     for M in range(len(self.nodes[0])):
+                      for L in range(len(self.nodes[0])):
+
+                           self.nodes[M][L].learning_algorithm.mean = self.nodes[I][J].learning_algorithm.mean
+                           #print "M",M,"L",L,"I",I,"J",J
+                           self.nodes[M][L].learning_algorithm.var = self.nodes[I][J].learning_algorithm.var
+                           self.nodes[M][L].learning_algorithm.starv = self.nodes[I][J].learning_algorithm.starv
+
+
 
     def update_beliefs(self):
         for I in range(len(self.nodes)):
