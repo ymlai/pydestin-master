@@ -60,7 +60,18 @@ class Layer:
                 #print "self.node",I," ",J,self.nodes[I][J].learning_algorithm.mean
                 #print "-------------------------------------------------------------------"
                 self.nodes[I][J].do_node_learning(self.mode)
-                for M in range(len(self.nodes)):
+                if J<len(self.nodes[0])-1:
+                    #print "case1=============================="
+                    #print "len(self.nodes),I,J",len(self.nodes),I,J,"=","[I][J+1]",[I],[J+1]
+                    self.nodes[I][J+1]=self.nodes[I][J]
+                if J==len(self.nodes[0])-1 and I<len(self.nodes[0])-1:
+                    #print "case2=============================="
+                    #print "len(self.nodes),I,J",len(self.nodes),I,J,"=","[I+1][0]",[I+1][0]
+                    self.nodes[I+1][0]=self.nodes[I][J]
+                if I==len(self.nodes)-1 and J==len(self.nodes)-1:
+                  #print "case3=============================="
+                  #print "len(self.nodes),I,J",len(self.nodes),I,J
+                  for M in range(len(self.nodes)):
                     for L in range(len(self.nodes)):
                            self.nodes[M][L].learning_algorithm.mean = self.nodes[I][J].learning_algorithm.mean
                            #print "M",M ,"L",L,"I",I,"J",J
@@ -69,6 +80,9 @@ class Layer:
                 #print "=========================initial===================================="
                 #print "self.node",I," ",J,self.nodes[I][J].learning_algorithm.mean
                 #print "********************************************************************"
+
+
+
 
     def do_layer_learning(self):
         #print "len(self.nodes)",len(self.nodes)
