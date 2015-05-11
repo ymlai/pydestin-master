@@ -253,5 +253,3 @@ end_time= datetime.now()
 
 print "end time", end_time
 print "running time_fin_svm", end_time-start_time
-
-s
