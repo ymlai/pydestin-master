@@ -83,6 +83,8 @@ for epoch in range(5):
                     DESTIN.layers[0][L - 1].nodes, [2, 2])
                 DESTIN.layers[0][L].shared_learning()
                 #DESTIN.layers[0][L].do_layer_learning()
+                #DESTIN.update_pool_belief_exporter()
+                DESTIN.update_belief_exporter()
     #if epoch%10==0:
          #pickle.dump( DESTIN, open( "SharedTemp", "wb" ) )
     print "Epoch = " + str(epoch+1)
