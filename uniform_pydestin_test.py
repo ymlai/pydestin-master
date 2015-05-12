@@ -4,7 +4,6 @@ from sklearn import svm
 from load_data import *
 from network import *
 import scipy.io as io
-
 from datetime import datetime
 start_time= datetime.now()
 print "start",start_time
@@ -23,7 +22,8 @@ network_mode = True
 #                           Incremental Clustering
 #
 num_nodes_per_layer = [[8, 8], [4, 4], [2, 2], [1, 1]]
-num_cents_per_layer = [128, 38, 28, 8]
+#num_cents_per_layer = [128, 38, 28, 8]
+num_cents_per_layer = [25, 25, 25, 25]
 print "num_cents_per_layer", num_cents_per_layer
 print "Uniform DeSTIN with Clustering"
 algorithm_choice = 'Clustering'
@@ -83,12 +83,13 @@ for epoch in range(5):
                     DESTIN.layers[0][L - 1].nodes, [2, 2])
                 DESTIN.layers[0][L].shared_learning()
                 #DESTIN.layers[0][L].do_layer_learning()
-                #DESTIN.update_pool_belief_exporter()
-                DESTIN.update_belief_exporter()
     #if epoch%10==0:
          #pickle.dump( DESTIN, open( "SharedTemp", "wb" ) )
     print "Epoch = " + str(epoch+1)
 #pickle.dump( DESTIN, open( "DESTIN[128, 38, 28, 8]5", "wb" ) )
+
+
+DESTIN = pickle.load( open( "DESTIN[128, 38, 28, 8]5", "rb" ) )
 
 print("DesTIN running/Feature Extraction/ over the Training Data")
 network_mode = False
@@ -104,13 +105,15 @@ for I in range(data.shape[0]):  # For Every image in the data set
         if L == 0:
             img = data[I][:].reshape(32, 32, 3)
             DESTIN.layers[0][L].load_input(img, [4, 4])
-            DESTIN.layers[0][L].do_layer_learning()
+            #DESTIN.layers[0][L].do_layer_learning()
+            DESTIN.layers[0][L].shared_learning()
         else:
             DESTIN.layers[0][L].load_input(
                 DESTIN.layers[0][L - 1].nodes, [2, 2])
-            DESTIN.layers[0][L].do_layer_learning()
-    DESTIN.update_pool_belief_exporter()
-    #DESTIN.update_belief_exporter()
+            #DESTIN.layers[0][L].do_layer_learning()
+            DESTIN.layers[0][L].shared_learning()
+    #DESTIN.update_pool_belief_exporter()
+    DESTIN.update_belief_exporter()
     if I in range(199, 50999, 200):
         Name = 'train/' + str(I + 1) + '.txt'
         #file_id = open(Name, 'w')
@@ -136,8 +139,8 @@ for I in range(data.shape[0]):  # For Every image in the data set
             DESTIN.layers[0][L].load_input(
                 DESTIN.layers[0][L - 1].nodes, [2, 2])
             DESTIN.layers[0][L].do_layer_learning()
-    DESTIN.update_pool_belief_exporter()
-    #DESTIN.update_belief_exporter()
+    #DESTIN.update_pool_belief_exporter()
+    DESTIN.update_belief_exporter()
 
     if I in range(199, 10199, 200):
         Name = 'test/' + str(I + 1) + '.txt'
@@ -196,8 +199,8 @@ trainLabel = np.squeeze(np.asarray(trainLabel).reshape(50000, 1))
 
 
 
-#np.savetxt('trainData.txt', np.array(trainData))
-#np.savetxt('trainLabel.txt', np.array(trainLabel))
+np.savetxt('trainData.txt', np.array(trainData))
+np.savetxt('trainLabel.txt', np.array(trainLabel))
 
 
 
@@ -217,11 +220,11 @@ print "loaded"
 testData = np.array([])
 print("Loading training and testing features")
 
-I = 399
+I = 199
 Name = 'test/' + str(I + 1) + '.txt'
 testData = np.ravel(np.loadtxt(Name))
 
-for I in range(599, 10000, 200):
+for I in range(399, 10000, 200):
     Name = 'test/' + str(I + 1) + '.txt'
     file_id = open(Name, 'r')
     Temp = np.ravel(np.loadtxt(Name))
@@ -232,23 +235,23 @@ del Temp
 Len = np.shape(testData)[0]
 Size = np.size(testData)
 
-I = 399
+I = 199
 Name = 'test/' + str(I + 1) + '.txt'
 testData1 = np.ravel(np.loadtxt(Name))
 print np.shape(testData1)[0]/200.0
 
-Width = np.float(Len)/9800.0
+Width = np.float(Len)/10000.0
 print Len
 print Size
-testData = testData.reshape((9800, Width))
+testData = testData.reshape((10000, Width))
 
-#np.savetxt('testData.txt', np.array(testData))
-#np.savetxt('testLabel.txt', np.array(testLabel))
+np.savetxt('testData.txt', np.array(testData))
+np.savetxt('testLabel.txt', np.array(testLabel))
 
 print "Predicting Test samples"
-print("Test Score = %f" % float(100 * SVM.score(testData, testLabel[200:10000], sample_weight = None)))
+print("Test Score = %f" % float(100 * SVM.score(testData, testLabel[0:10000], sample_weight = None)))
 #print("Training Accuracy = %f" % (SVM.score(testData, testLabel) * 100))
-eff['test'] = SVM.score(testData, testLabel[200:10000]) * 100
+eff['test'] = SVM.score(testData, testLabel[0:10000]) * 100
 io.savemat('accuracy.mat', eff)
 
 end_time= datetime.now()
