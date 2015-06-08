@@ -21,7 +21,7 @@ network_mode = True
 #
 num_nodes_per_layer = [[8, 8], [4, 4], [2, 2], [1, 1]]
 num_cents_per_layer = [50, 25, 25 ,50]
-pool_size = [(16,1),(4,1),(1,1),(1,1)]        #pooling size: The first number is the number of vector 
+pool_size = [(16,1),(1,1),(1,1),(1,1)]        #pooling size: The first number is the number of vector 
                                               #you want to pool. For example, (64,1) will pool all the 
                                               #vector in the first layer. (16,1) will divide the first layer 
                                               #in to 4 quarters and pool each of them. (4,1) will divide the 
@@ -87,7 +87,7 @@ for epoch in range(5):
                 DESTIN.layers[0][L].do_layer_learning()
                 #DESTIN.layers[0][L].shared_learning()
     print "Epoch = " + str(epoch+1)
-#pickle.dump( DESTIN, open( "DESTIN_max_pool", "wb" ) )
+pickle.dump( DESTIN, open( "DESTIN_conv", "wb" ) )
 print "done"
 
 DESTIN=pickle.load( open( "DESTIN_conv", "rb" ) )
@@ -115,7 +115,7 @@ for I in range(data.shape[0]):  # For Every image in the data set
             DESTIN.layers[0][L].do_layer_learning()
     DESTIN.update_belief_exporter(pool_size, True ,'average_exc_pad')             #( maxpool_shape , ignore_border, mode)
     if I in range(199, 50999, 200):
-        Name = 'pa_train/' + str(I + 1) + '.txt'
+        Name = 'train/' + str(I + 1) + '.txt'
         #file_id = open(Name, 'w')
         np.savetxt(Name, np.array(DESTIN.network_belief['belief']))
         #file_id.close()
@@ -139,7 +139,7 @@ for I in range(data.shape[0]):  # For Every image in the data set
             DESTIN.layers[0][L].do_layer_learning()
     DESTIN.update_belief_exporter(pool_size, True ,'average_exc_pad') 
     if I in range(199, 10199, 200):
-        Name = 'pa_test/' + str(I + 1) + '.txt'
+        Name = 'test/' + str(I + 1) + '.txt'
         np.savetxt(Name, np.array(DESTIN.network_belief['belief']))
         # Get rid-off accumulated training beliefs
         DESTIN.clean_belief_exporter()
@@ -160,12 +160,12 @@ del testData
 print("Loading training and testing features")
 
 I = 199
-Name = 'pa_train/' + str(I + 1) + '.txt'
+Name = 'train/' + str(I + 1) + '.txt'
 trainData = np.ravel(np.loadtxt(Name))
 
 
 for I in range(399, 50000, 200):
-    Name = 'pa_train/' + str(I + 1) + '.txt'
+    Name = 'train/' + str(I + 1) + '.txt'
     file_id = open(Name, 'r')
     Temp = np.ravel(np.loadtxt(Name))
     trainData = np.hstack((trainData, Temp))
@@ -200,11 +200,11 @@ testData = np.array([])
 print("Loading training and testing features")
 
 I = 399
-Name = 'pa_test/' + str(I + 1) + '.txt'
+Name = 'test/' + str(I + 1) + '.txt'
 testData = np.ravel(np.loadtxt(Name))
 
 for I in range(599, 10000, 200):
-    Name = 'pa_test/' + str(I + 1) + '.txt'
+    Name = 'test/' + str(I + 1) + '.txt'
     file_id = open(Name, 'r')
     Temp = np.ravel(np.loadtxt(Name))
     testData = np.hstack((testData, Temp))
@@ -216,7 +216,7 @@ Size = np.size(testData)
 
 
 I = 399
-Name = 'pa_test/' + str(I + 1) + '.txt'
+Name = 'test/' + str(I + 1) + '.txt'
 testData1 = np.ravel(np.loadtxt(Name))
 print np.shape(testData1)[0]/200.0
 
