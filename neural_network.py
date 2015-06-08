@@ -136,7 +136,7 @@ for i in range(deta):
    DS.appendLinked(x_train[i]   , [int(y_train[i])])
 
 DS._convertToOneOfMany(bounds=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-net = buildNetwork(450, 50, 10, bias=True, outclass=SoftmaxLayer)
+net = buildNetwork(, 50, 10, bias=True, outclass=SoftmaxLayer)
 print "loading network"
 net=NetworkReader.readFrom('data/net')
 #####################
