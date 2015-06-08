@@ -3,6 +3,13 @@ __author__ = 'teddy'
 import scipy.io as io
 from load_data import *
 from layer import *
+import theano
+from theano.tensor.signal import downsample
+import theano.tensor as T
+import numpy as np
+import math
+
+
 
 # io.savemat(file_name,Dict,True)
 # TODO: get ridoff the sequential requirements like first feed the layer
@@ -59,32 +66,103 @@ class Network():
                                                                   np.array(self.layers[0][i].nodes[j][k].belief).ravel()))
 
 
+    def update_belief_exporter(self, maxpool_shape , ignore_border, mode):
+        input = T.dmatrix('input')
+        for i in range(self.lowest_layer, self.number_of_layers):
+            pool_out = downsample.max_pool_2d(input, maxpool_shape[i] , ignore_border=ignore_border, mode=mode)   
+            f = theano.function([input],pool_out)    #function of pooling belief vector, maxpool_shape[i] = pool size
+            temp_belief = np.array([])
+            for j in range(len(self.layers[0][i].nodes)):
+                for k in range(len(self.layers[0][i].nodes[0])):
+                    if temp_belief == np.array([]):
+                        temp_belief = np.array(
+                            self.layers[0][i].nodes[j][k].belief).ravel()
+                    else:
+                        temp_belief = np.hstack((np.array(temp_belief),
+                                                                  np.array(self.layers[0][i].nodes[j][k].belief).ravel()))           
+                        
+            no_of_centroids = self.algorithm_params['num_cents_per_layer'][i]
+            no_of_nodes = self.number_of_nodesPerLayer[i][0]**2
+            temp_belief = temp_belief.reshape(no_of_nodes,no_of_centroids)
 
-    def update_pool_belief_exporter(self):
-       for i in range(self.lowest_layer, self.number_of_layers):
-        if (i==self.number_of_layers-1):         # Top layer no need to pool
-           self.network_belief['belief'] = np.hstack((np.array(self.network_belief['belief']),np.array(self.layers[0][i].nodes[0][0].belief).ravel()))
-        else:
-            l=len(self.layers[0][i].nodes)
-            self.pool_belief(0,l/2,0,l/2,i)          #pool belief vector from 1/4 layer
-            self.pool_belief(l/2,l,0,l/2,i)
-            self.pool_belief(0,l/2,l/2,l,i)
-            self.pool_belief(l/2,l,l/2,l,i)
-            #self.pool_belief(0,l,0,l,i)
-            
+            if no_of_nodes != 4 and no_of_nodes != 1:
+		    temp_belief_a = temp_belief[0:no_of_nodes/2,:]                  # split the temp_belief into two parts 
+		    temp_belief_b = temp_belief[no_of_nodes/2:no_of_nodes,:]        #  
+		    matrix_a = np.zeros((no_of_nodes/4, no_of_centroids))           # |A|A|
+		    matrix_b = np.zeros((no_of_nodes/4, no_of_centroids))           # |B|B|
+                    temp_belief = np.array([])
+		    a=0 
+		    b=0
+		    a2=0 
+		    b2=0
+                    a1=0
+                    b1=0
+		    for n in range(no_of_nodes/2):
 
+                     if no_of_nodes == 16:
+			 if ( n / 2 )%2 == 0 :
+			     matrix_a[a,:] = temp_belief_a[n,:]
+			     a=a+1
+			 else: 
+			     matrix_b[b,:] = temp_belief_a[n,:]
+			     b=b+1
 
-    def pool_belief(self, row_start, row_end, col_start, col_end, layer_index):
-        temp_network_belief=np.array([0])
-        for j in range(row_start, row_end):
-                for k in range(col_start, col_end):
-                        temp_network_belief = np.array(self.layers[0][layer_index].nodes[j][k].belief).ravel()+temp_network_belief
-        self.network_belief['belief'] = np.hstack((np.array(self.network_belief['belief']),temp_network_belief.ravel()))
-        #print "temp_network_belief=np.array([0])",temp_network_belief
-        #print "self.network_belief['belief']",self.network_belief['belief']
-        #print "len",len(self.network_belief['belief'])
-        #print "=====================================================+"
+                     elif no_of_nodes == 64:           
+			 if ( n / 4 )%2 == 0 :  # (n/4)%2
+                            if ((n / 2) % 2) == 0 : 
+				matrix_a[a1,:] = temp_belief_a[n,:]
+                            else:
+                                matrix_a[a1+4,:] = temp_belief_a[n,:]  
+                                a1=a1+1                      
+			 else : 
+                            if (n / 2) % 2 == 0 : 
+			        matrix_b[b1,:] = temp_belief_a[n,:]
+                            else:
+                                matrix_b[b1+4,:] = temp_belief_b[n,:]
+                                b1=b1+1
 
+                    temp_belief = np.hstack((np.array(matrix_a).ravel(),np.array(matrix_b).ravel())) 
+		    a=0 
+		    b=0
+
+		    for n in range(no_of_nodes/2):
+
+                     if no_of_nodes ==16 :
+			 if ( n / 2 )%2 == 0 :
+			     matrix_a[a,:] = temp_belief_b[n,:]
+			     a=a+1
+			 else: 
+			     matrix_b[b,:] = temp_belief_b[n,:]
+			     b=b+1
+
+                     elif no_of_nodes == 64:           
+			 if ( n / 4 )%2 == 0 :  # (n/4)%2
+                            if ((n / 2) % 2) == 0 : 
+				matrix_a[a1,:] = temp_belief_b[n,:]
+                            else:
+                                matrix_a[a2+4,:] = temp_belief_b[n,:]  
+                                a2=a2+1                      
+			 else : 
+                            if (n / 2) % 2 == 0 : 
+			        matrix_b[b2,:] = temp_belief_b[n,:]
+                            else:
+                                matrix_b[b2+4,:] = temp_belief_b[n,:]
+                                b2=b2+1
+ 
+                    temp_belief = np.hstack((np.array(temp_belief),np.array(matrix_a).ravel())) 
+		    temp_belief = np.hstack((np.array(temp_belief),np.array(matrix_b).ravel()))
+                    temp_belief = temp_belief.reshape(no_of_nodes,no_of_centroids)  
+
+                   
+            #invals = np.array(temp_belief)
+            pool_temp_belief=(f(temp_belief))
+            #print 'pool',pool_temp_belief
+            if self.network_belief['belief'] == np.array([]):
+                self.network_belief['belief'] = np.array(pool_temp_belief).ravel()
+            else:
+                self.network_belief['belief'] = np.hstack((np.array(self.network_belief['belief']),
+                                                          np.array(pool_temp_belief).ravel()))
+            #print self.network_belief['belief'].shape
 
 
 
@@ -99,4 +177,5 @@ class Network():
 
     def clean_belief_exporter(self):
         self.network_belief['belief'] = np.array([])
+
 
