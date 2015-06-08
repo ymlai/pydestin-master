@@ -132,10 +132,10 @@ class Network():
 			     matrix_a[a,:] = temp_belief_b[n,:]
 			     a=a+1
 			 else: 
-			     matrix_b[b,:] = temp_belief_b[n,:]           #rearrange the node order in the first layer
+			     matrix_b[b,:] = temp_belief_b[n,:]           
 			     b=b+1
 
-                     elif no_of_nodes == 64:           
+                     elif no_of_nodes == 64:                    #rearrange the node order in the first layer
 			 if ( n / 4 )%2 == 0 :  # (n/4)%2
                             if ((n / 2) % 2) == 0 : 
 				matrix_a[a1,:] = temp_belief_b[n,:]
