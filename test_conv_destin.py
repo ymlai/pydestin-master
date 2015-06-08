@@ -20,12 +20,12 @@ network_mode = True
 #                           Incremental Clustering
 #
 num_nodes_per_layer = [[8, 8], [4, 4], [2, 2], [1, 1]]
-num_cents_per_layer = [100, 100, 100 ,100]
-pool_size=[(4,1),(4,1),(1,1),(1,1)]           #pooling size: the first number is the number of vector 
+num_cents_per_layer = [50, 25, 25 ,50]
+pool_size = [(16,1),(4,1),(1,1),(1,1)]        #pooling size: The first number is the number of vector 
                                               #you want to pool. For example, (64,1) will pool all the 
                                               #vector in the first layer. (16,1) will divide the first layer 
-                                              #in to 4 quarters and pool each of them. (4,1) will pool 1/8 of 
-                                              #the vectors in first layer.
+                                              #in to 4 quarters and pool each of them. (4,1) will divide the 
+                                              #first layer in to 16th pieces and pool each of them
 print "Uniform DeSTIN with Clustering"
 algorithm_choice = 'Clustering'
 alg_params = {'mr': 0.01, 'vr': 0.01, 'sr': 0.001, 'DIMS': [],
@@ -144,6 +144,8 @@ for I in range(data.shape[0]):  # For Every image in the data set
         # Get rid-off accumulated training beliefs
         DESTIN.clean_belief_exporter()
 
+
+
 print "Training With SVM"
 print("Loading training and test labels")
 [trainData, trainLabel] = loadCifar(10)
@@ -179,8 +181,6 @@ Width = Len/50000
 print Len
 print Width*50000
 trainData = trainData.reshape((50000, Width))
-
-
 
 # Training SVM
 SVM = svm.LinearSVC(C=1)
@@ -233,6 +233,7 @@ print("Test Score = %f" % float(100 * SVM.score(testData, testLabel[200:10000]))
 #print("Training Accuracy = %f" % (SVM.score(testData, testLabel) * 100))
 eff['test'] = SVM.score(testData, testLabel[200:10000]) * 100
 io.savemat('accuracy.mat', eff)
+
 
 
 
