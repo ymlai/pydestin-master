@@ -7,22 +7,18 @@ import numpy as np
 import pybrain
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
-
 from pybrain.datasets            import ClassificationDataSet
 from pybrain.utilities           import percentError
 from pybrain.tools.shortcuts     import buildNetwork
-
 from pybrain.structure.modules   import SoftmaxLayer
 from pylab import ion, ioff, figure, draw, contourf, clf, show, hold, plot
 from scipy import diag, arange, meshgrid, where
 from numpy.random import multivariate_normal
 from pybrain.tools.customxml.networkwriter import NetworkWriter
 from pybrain.tools.customxml.networkreader import NetworkReader
-
-
 #from pybrain.tools.xml.networkwriter import NetworkWriter
-'''
-print "Training With SVM"
+
+print "Training With Neural network"
 print("Loading training and test labels")
 [trainData, trainLabel] = loadCifar(10)
 del trainData
@@ -43,7 +39,6 @@ np.savetxt(Name, np.array(testLabel))
 # here we do not use the whole set of feature extracted from DeSTIN
 # We use the features which are extracted from the top few layers
 print("Loading training and testing features")
-
 
 
 I = 199
@@ -106,7 +101,7 @@ Size = np.size(testData)
 Width = np.float(Len)/9800.0
 print Len
 print Size
-'''
+
 deta=50000
 
 Name = open('trainData.txt', 'r')
@@ -137,14 +132,6 @@ Name = open('testLabel.txt', 'r')
 testLabel = np.ravel(np.loadtxt(Name))
 y_test = testLabel.reshape( 10000, 1 )
 ###################
-
-
-
-
-
-
-
-
 #initialize network
 DS = pybrain.datasets.classification.ClassificationDataSet(inp=450, nb_classes=10, class_labels=['airplane' , 'automobile', 'bird','cat' ,'deer','dog','frog','horse','ship','truck'])
 
@@ -158,8 +145,7 @@ print "loading network"
 net=NetworkReader.readFrom('data/net')
 #####################
 
-
-#train model
+#train the model
 trainer = BackpropTrainer(net, DS )
 err=0
 err_p=1
@@ -177,8 +163,7 @@ while error > 0.1 or err_p>.2:
   err_p=err/float(deta)
   err=0
 
-
-#test model
+#test the model
   test_err=0
   for i in range(10000): 
     test_result = net.activate(x_test[i])
@@ -187,10 +172,6 @@ while error > 0.1 or err_p>.2:
        test_err=test_err+1
   test_err_p=test_err/float(10000)
   test_err=0
-
-
-
-
 
 #print result      
   print "Iteration:{0} Error: {1} train_accuracy: {2} test_acc: {3}".format(iteration, error, 1-err_p, 1-test_err_p)
@@ -201,28 +182,4 @@ while error > 0.1 or err_p>.2:
      NetworkWriter.writeToFile(net,'data/net'+str(iteration))
 NetworkWriter.writeToFile(net,'net')
 
-'''
 
-Name = open('testData.txt', 'r')
-testData = np.ravel(np.loadtxt(Name))
-
-Len = np.shape(testData)[0]
-
-x_test = testData.reshape( 10000, 450)
-
-Name = open('testLabel.txt', 'r')
-
-testLabel = np.ravel(np.loadtxt(Name))
-y_test = testLabel.reshape( 10000, 1 )
-
-
-test_err=0
-for i in range(10000): 
-   result = net.activate(x_test[i])
-   result = result.argmax(axis=0)
-   if result != int(y_test[i]):
-      test_err=test_err+1
-test_err_p=test_err/float(10000)
-print "test", "Iteration: 1",  "classification Err {0}, accuracy {1}".format(test_err_p, 1-test_err_p)
-
-'''
