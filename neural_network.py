@@ -37,7 +37,7 @@ np.savetxt(Name, np.array(testLabel))
 
 # here we do not use the whole set of feature extracted from DeSTIN
 # We use the features which are extracted from the top few layers
-print("Loading training and testing features")
+print("Loading training features")
 
 
 I = 199
@@ -60,29 +60,14 @@ np.savetxt(Name, np.array(trainData))
 Len = np.shape(trainData)[0]
 Size = np.size(trainData)
 trainLabel = np.squeeze(np.asarray(trainLabel).reshape(50000, 1))
-
-
-
-I = 199
-Name = 'p_test/' + str(I + 1) + '.txt'
-testData = np.ravel(np.loadtxt(Name))
-
-for I in range(399, 10000, 200):
-    Name = 'p_test/' + str(I + 1) + '.txt'
-    file_id = open(Name, 'r')
-    Temp = np.ravel(np.loadtxt(Name))
-    testData = np.hstack((testData, Temp))
-
-del Temp
-
-Len = np.shape(testData)[0]
-Size = np.size(testData)
 dim = Len/50000
+print 'dim',dim
+
+
+
+print("Loading testing features")
 
 testData = np.array([])
-print("Loading training and testing features")
-
-
 for I in range(199, 10000, 200):
     Name = 'p_test/' + str(I + 1) + '.txt'
     file_id = open(Name, 'r')
@@ -138,7 +123,7 @@ for i in range(deta):
 DS._convertToOneOfMany(bounds=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 net = buildNetwork(dim, 50, 10, bias=True, outclass=SoftmaxLayer)
 print "loading network"
-net=NetworkReader.readFrom('data/net')
+#net=NetworkReader.readFrom('data/net')
 #####################
 
 #train the model
@@ -171,11 +156,12 @@ while error > 0.1 or err_p>.2:
 
 #print result      
   print "Iteration:{0} Error: {1} train_accuracy: {2} test_acc: {3}".format(iteration, error, 1-err_p, 1-test_err_p)
+  
   if iteration%50==0:
      print 'save'
      NetworkWriter.writeToFile(net,'data/net')
   if iteration%200==0:
      NetworkWriter.writeToFile(net,'data/net'+str(iteration))
-NetworkWriter.writeToFile(net,'net')
+#NetworkWriter.writeToFile(net,'net')
 
 
