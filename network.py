@@ -87,9 +87,9 @@ class Network():
 
             if no_of_nodes != 4 and no_of_nodes != 1:
 		    temp_belief_a = temp_belief[0:no_of_nodes/2,:]                  # split the temp_belief into two parts 
-		    temp_belief_b = temp_belief[no_of_nodes/2:no_of_nodes,:]        #  
-		    matrix_a = np.zeros((no_of_nodes/4, no_of_centroids))           # |A|A|
-		    matrix_b = np.zeros((no_of_nodes/4, no_of_centroids))           # |B|B|
+		    temp_belief_b = temp_belief[no_of_nodes/2:no_of_nodes,:]        
+		    matrix_a = np.zeros((no_of_nodes/4, no_of_centroids))           
+		    matrix_b = np.zeros((no_of_nodes/4, no_of_centroids))          
                     temp_belief = np.array([])
 		    a=0 
 		    b=0
@@ -99,7 +99,7 @@ class Network():
                     b1=0
 		    for n in range(no_of_nodes/2):
 
-                     if no_of_nodes == 16:
+                     if no_of_nodes == 16:                              #rearrange the node order in the second layer
 			 if ( n / 2 )%2 == 0 :
 			     matrix_a[a,:] = temp_belief_a[n,:]
 			     a=a+1
@@ -107,7 +107,7 @@ class Network():
 			     matrix_b[b,:] = temp_belief_a[n,:]
 			     b=b+1
 
-                     elif no_of_nodes == 64:           
+                     elif no_of_nodes == 64:                                #rearrange the node order in the first layer
 			 if ( n / 4 )%2 == 0 :  # (n/4)%2
                             if ((n / 2) % 2) == 0 : 
 				matrix_a[a1,:] = temp_belief_a[n,:]
@@ -127,12 +127,12 @@ class Network():
 
 		    for n in range(no_of_nodes/2):
 
-                     if no_of_nodes ==16 :
+                     if no_of_nodes ==16 :                             #rearrange the node order in the second layer
 			 if ( n / 2 )%2 == 0 :
 			     matrix_a[a,:] = temp_belief_b[n,:]
 			     a=a+1
 			 else: 
-			     matrix_b[b,:] = temp_belief_b[n,:]
+			     matrix_b[b,:] = temp_belief_b[n,:]           #rearrange the node order in the first layer
 			     b=b+1
 
                      elif no_of_nodes == 64:           
