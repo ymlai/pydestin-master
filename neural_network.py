@@ -11,12 +11,11 @@ from pybrain.datasets            import ClassificationDataSet
 from pybrain.utilities           import percentError
 from pybrain.tools.shortcuts     import buildNetwork
 from pybrain.structure.modules   import SoftmaxLayer
-from pylab import ion, ioff, figure, draw, contourf, clf, show, hold, plot
-from scipy import diag, arange, meshgrid, where
-from numpy.random import multivariate_normal
+#from pylab import ion, ioff, figure, draw, contourf, clf, show, hold, plot
+#from scipy import diag, arange, meshgrid, where
+#from numpy.random import multivariate_normal
 from pybrain.tools.customxml.networkwriter import NetworkWriter
 from pybrain.tools.customxml.networkreader import NetworkReader
-#from pybrain.tools.xml.networkwriter import NetworkWriter
 
 print "Training With Neural network"
 print("Loading training and test labels")
@@ -78,7 +77,7 @@ del Temp
 
 Len = np.shape(testData)[0]
 Size = np.size(testData)
-
+dim = Len/50000
 
 testData = np.array([])
 print("Loading training and testing features")
@@ -98,9 +97,6 @@ Len = np.shape(testData)[0]
 Size = np.size(testData)
 
 
-Width = np.float(Len)/9800.0
-print Len
-print Size
 
 deta=50000
 
@@ -110,7 +106,7 @@ trainData = np.ravel(np.loadtxt(Name))
 Len = np.shape(trainData)[0]
 
 #load train data
-train = trainData.reshape( 50000, 450)
+train = trainData.reshape( 50000, dim)
 x_train = train[0:deta,:] 
 Name = open('trainLabel.txt', 'r')
 
@@ -125,7 +121,7 @@ testData = np.ravel(np.loadtxt(Name))
 
 Len = np.shape(testData)[0]
 
-x_test = testData.reshape( 10000, 450)
+x_test = testData.reshape( 10000, dim)
 
 Name = open('testLabel.txt', 'r')
 
@@ -133,7 +129,7 @@ testLabel = np.ravel(np.loadtxt(Name))
 y_test = testLabel.reshape( 10000, 1 )
 ###################
 #initialize network
-DS = pybrain.datasets.classification.ClassificationDataSet(inp=450, nb_classes=10, class_labels=['airplane' , 'automobile', 'bird','cat' ,'deer','dog','frog','horse','ship','truck'])
+DS = pybrain.datasets.classification.ClassificationDataSet(inp=dim, nb_classes=10, class_labels=['airplane' , 'automobile', 'bird','cat' ,'deer','dog','frog','horse','ship','truck'])
 
 
 for i in range(deta): 
