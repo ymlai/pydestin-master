@@ -1,5 +1,4 @@
 __author__ = 'mong'
-__author__ = 'mong'
 __author__ = 'teddy'
 from network import *
 from load_data import *
@@ -22,7 +21,11 @@ network_mode = True
 #
 num_nodes_per_layer = [[8, 8], [4, 4], [2, 2], [1, 1]]
 num_cents_per_layer = [100, 100, 100 ,100]
-pool_size=[(4,1),(4,1),(1,1),(1,1)]
+pool_size=[(4,1),(4,1),(1,1),(1,1)]           #pooling size: the first number is the number of vector 
+                                              #you want to pool. For example, (64,1) will pool all the 
+                                              #vector in the first layer. (16,1) will divide the first layer 
+                                              #in to 4 quarters and pool each of them. (4,1) will pool 1/8 of 
+                                              #the vectors in first layer.
 print "Uniform DeSTIN with Clustering"
 algorithm_choice = 'Clustering'
 alg_params = {'mr': 0.01, 'vr': 0.01, 'sr': 0.001, 'DIMS': [],
@@ -44,7 +47,7 @@ alg_params = [[inp_size, hid_size], [4 * hid_size, hid_size],
              [4 * hid_size, hid_size], [4 * hid_size, hid_size]]
 #  ******************************************************************************************
 '''
-'''
+
 #Load Data, 10 loads 5 batches in total 50,000
 # 1 to 5 load batch_1 to batch_5training images, 1 to five
 [data, labels] = loadCifar(10)
@@ -86,8 +89,8 @@ for epoch in range(5):
     print "Epoch = " + str(epoch+1)
 #pickle.dump( DESTIN, open( "DESTIN_max_pool", "wb" ) )
 print "done"
-'''
-DESTIN=pickle.load( open( "DESTIN_max_pool", "rb" ) )
+
+DESTIN=pickle.load( open( "DESTIN_conv", "rb" ) )
 
 
 
