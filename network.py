@@ -54,7 +54,7 @@ class Network():
     def train_layer(self, layer_num):
         self.layers[0][layer_num].do_layer_learning(self.operating_mode)
 
-    def update_belief_exporter(self):
+    def update_belief_exporter(self):                   # update_belief_exporter without pooling functionality
         for i in range(self.lowest_layer, self.number_of_layers):
             for j in range(len(self.layers[0][i].nodes)):
                 for k in range(len(self.layers[0][i].nodes[0])):
@@ -66,7 +66,7 @@ class Network():
                                                                   np.array(self.layers[0][i].nodes[j][k].belief).ravel()))
 
 
-    def update_belief_exporter(self, maxpool_shape , ignore_border, mode):
+    def update_belief_exporter(self, maxpool_shape , ignore_border, mode):   #update_belief_exporter with pooling functionality
         input = T.dmatrix('input')
         for i in range(self.lowest_layer, self.number_of_layers):
             pool_out = downsample.max_pool_2d(input, maxpool_shape[i] , ignore_border=ignore_border, mode=mode)   
